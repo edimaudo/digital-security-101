@@ -47,7 +47,7 @@
             background: linear-gradient(135deg, #2575fc 0%, #6a11cb 70%, #8E2DE2 100%);
         }
         .option-button {
-            /* Directly applied blueish-purple theme with button-like styling */
+            /* Explicitly defined blueish-purple theme with button-like styling */
             background-color: #4f46e5; /* indigo-600 */
             color: #ffffff; /* text-white */
             padding: 0.75rem 1.5rem; /* py-3 px-6 */
@@ -56,7 +56,8 @@
             transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
             width: 100%;
             text-align: left;
-            border: transparent;
+            border: none; /* Ensure no default button border */
+            cursor: pointer; /* Indicate it's clickable */
         }
         .option-button:hover {
             background-color: #4338ca; /* indigo-700 */
@@ -83,13 +84,19 @@
         #nextQuestionBtn {
             background-color: #4f46e5; /* indigo-600 */
             color: #ffffff; /* text-white */
-            @apply font-bold py-2 px-6 rounded-lg transition duration-300 ease-in-out;
+            font-weight: 700; /* font-bold */
+            padding: 0.5rem 1.5rem; /* py-2 px-6 */
+            border-radius: 0.5rem; /* rounded-lg */
+            transition: background-color 0.3s ease-in-out;
+            border: none; /* Ensure no default button border */
+            cursor: pointer; /* Indicate it's clickable */
         }
         #nextQuestionBtn:hover {
             background-color: #4338ca; /* indigo-700 */
         }
         #nextQuestionBtn:disabled {
-            @apply opacity-70 cursor-not-allowed;
+            opacity: 0.7;
+            cursor: not-allowed;
         }
     </style>
 </head>
@@ -97,13 +104,14 @@
 
     <!-- Landing Page -->
     <div id="landingPage" class="min-h-screen flex flex-col items-center justify-center text-white landing-gradient p-6 text-center">
-        <h1 class="text-6xl md:text-8xl font-extrabold leading-tight mb-8 animate-fade-in-up">
+        <h1 class="text-6xl md:text-8xl font-extrabold leading-tight mb-8">
             Digital Security for All
         </h1>
-        <p class="text-xl md:text-2xl mb-12 max-w-4xl mx-auto opacity-0 animate-fade-in-delay-1s">
-            Empowering every individual and professional with essential cybersecurity knowledge to thrive in a connected world.
+
+        <p class="text-xl md:text-2xl mb-12 max-w-4xl mx-auto">
+            Empowering professionals with essential cybersecurity knowledge to thrive in a connected world.
         </p>
-        <button id="exploreRolesBtn" class="bg-white text-purple-700 hover:bg-gray-100 font-bold py-4 px-10 rounded-full shadow-xl transition duration-300 ease-in-out transform hover:scale-105 animate-fade-in-delay-2s">
+        <button id="exploreRolesBtn" class="bg-white text-purple-700 hover:bg-gray-100 font-bold py-4 px-10 rounded-full shadow-xl transition duration-300 ease-in-out transform hover:scale-105">
             Explore Scenarios
         </button>
     </div>
@@ -289,7 +297,7 @@
                     },
                     {
                         question: "How can you proactively protect your social media accounts?",
-                        option1: "Use the same password for all accounts for easy recall.",
+                        option1: "Use the same password for all accounts for and easy recall.",
                         option2: "Change social media passwords regularly and enable two-factor authentication (2FA) on all accounts.",
                         correctAnswer: "option2",
                         explanation: "Strong, unique passwords and 2FA add significant layers of security to your accounts, making them much harder to compromise."
@@ -397,9 +405,9 @@
                         explanation: "Understanding the type and sensitivity of data on the lost device is critical for determining the severity of the breach and necessary next steps."
                     },
                     {
-                        question: "Are there regulatory reporting requirements for lost devices?",
-                        option1: "No, not for a single device, only for large-scale breaches.",
-                        option2: "Report the incident to regulatory bodies as required (e.g., HIPAA in the US) within the mandated timeframe.",
+                        question: "Are there any legal obligations to report this incident?",
+                        option1: "No, it's a private matter as long as patient data isn't publicly exposed.",
+                        option2: "Report the incident to relevant regulatory bodies (e.g., HIPAA in the US) as required by law.",
                         correctAnswer: "option2",
                         explanation: "Healthcare regulations like HIPAA mandate reporting of breaches involving protected health information, regardless of how the device was lost."
                     },
@@ -487,7 +495,7 @@
                     },
                     {
                         question: "What proactive steps can you take to secure your accounts?",
-                        option1: "Use a simple, easy-to-remember password across all your accounts.",
+                        option1: "Use the same password for all accounts for and easy recall.",
                         option2: "Always use strong, unique passwords and enable two-factor authentication (2FA) on all your social media and email accounts.",
                         correctAnswer: "option2",
                         explanation: "Strong passwords and 2FA are fundamental security practices that significantly reduce the risk of account takeover."
@@ -597,7 +605,7 @@
                     {
                         question: "What kind of social engineering tactics should you be aware of?",
                         option1: "Only those involving fake invoices or financial requests.",
-                        option2: "Be vigilant about social engineering tactics that target executive support staff, leveraging authority and urgency.",
+                        option2: "Be vigilant about social engineering tactics that create a sense of urgency or authority to bypass security procedures.",
                         correctAnswer: "option2",
                         explanation: "Attackers often target executive assistants because they have access to sensitive information and are often under pressure to respond quickly to executive requests."
                     }
