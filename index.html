@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Security Essentials</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; /* Light background */
+            color: #333;
+        }
+        .gradient-bg {
+            background: linear-gradient(to right, #6a11cb 0%, #2575fc 100%);
+        }
+        .card {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        .modal-overlay {
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+        }
+        /* Custom scrollbar for scenario content */
+        .scenario-content::-webkit-scrollbar {
+            width: 8px;
+        }
+        .scenario-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .scenario-content::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        .scenario-content::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        .landing-gradient {
+            /* More blue, subtle purple */
+            background: linear-gradient(135deg, #2575fc 0%, #6a11cb 70%, #8E2DE2 100%);
+        }
+        .option-button {
+            /* Directly applied blueish-purple theme with button-like styling */
+            background-color: #4f46e5; /* indigo-600 */
+            color: #ffffff; /* text-white */
+            padding: 0.75rem 1.5rem; /* py-3 px-6 */
+            border-radius: 0.5rem; /* rounded-lg */
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* shadow-sm */
+            transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            width: 100%;
+            text-align: left;
+            border: transparent;
+        }
+        .option-button:hover {
+            background-color: #4338ca; /* indigo-700 */
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .option-button.correct {
+            background-color: #d1fae5; /* green-100 */
+            color: #065f46; /* green-800 */
+            border-color: #34d399; /* green-500 */
+        }
+        .option-button.incorrect {
+            background-color: #fee2e2; /* red-100 */
+            color: #991b1b; /* red-800 */
+            border-color: #ef4444; /* red-500 */
+        }
+        .option-button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none; /* remove transform on disabled */
+            box-shadow: none; /* remove shadow on disabled */
+        }
+
+        #nextQuestionBtn {
+            background-color: #4f46e5; /* indigo-600 */
+            color: #ffffff; /* text-white */
+            @apply font-bold py-2 px-6 rounded-lg transition duration-300 ease-in-out;
+        }
+        #nextQuestionBtn:hover {
+            background-color: #4338ca; /* indigo-700 */
+        }
+        #nextQuestionBtn:disabled {
+            @apply opacity-70 cursor-not-allowed;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Landing Page -->
+    <div id="landingPage" class="min-h-screen flex flex-col items-center justify-center text-white landing-gradient p-6 text-center">
+        <h1 class="text-6xl md:text-8xl font-extrabold leading-tight mb-8 animate-fade-in-up">
+            Digital Security for All
+        </h1>
+        <p class="text-xl md:text-2xl mb-12 max-w-4xl mx-auto opacity-0 animate-fade-in-delay-1s">
+            Empowering every individual and professional with essential cybersecurity knowledge to thrive in a connected world.
+        </p>
+        <button id="exploreRolesBtn" class="bg-white text-purple-700 hover:bg-gray-100 font-bold py-4 px-10 rounded-full shadow-xl transition duration-300 ease-in-out transform hover:scale-105 animate-fade-in-delay-2s">
+            Explore Scenarios
+        </button>
+    </div>
+
+    <!-- Main Content (initially hidden) -->
+    <div id="mainContent" class="hidden">
+        <!-- Navigation Bar -->
+        <nav class="bg-white shadow-md py-4 px-6 md:px-12 flex justify-between items-center rounded-b-lg">
+            <div class="text-2xl font-bold text-gray-800">Digital Security Essentials</div>
+            <div class="hidden md:flex space-x-6">
+                <a href="#" class="text-gray-600 hover:text-blue-600 font-medium" id="homeNavLink">Home</a>
+                <a href="#select-your-scenario" class="text-gray-600 hover:text-blue-600 font-medium" id="scenariosNavLink">Scenarios</a>
+            </div>
+            <button class="md:hidden text-gray-600 focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </button>
+        </nav>
+
+        <!-- Hero Section -->
+        <header class="gradient-bg text-white py-20 px-6 md:px-12 text-center rounded-b-lg shadow-lg">
+            <h1 class="text-4xl md:text-5xl font-extrabold leading-tight mb-4">
+                Navigate the Digital World Securely
+            </h1>
+            <p class="text-lg md:text-xl mb-8 max-w-3xl mx-auto">
+                Empowering you with practical cybersecurity knowledge to protect your digital life and professional assets.
+            </p>
+            <!-- "Learn More" button removed -->
+        </header>
+
+        <!-- Select Your Scenario Section -->
+        <section id="select-your-scenario" class="py-16 px-6 md:px-12">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-800">Select Your Scenario</h2>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 max-w-6xl mx-auto">
+                <!-- Scenario Card Template -->
+                <!-- Social Media Intern -->
+                <div class="card bg-white p-6 rounded-xl shadow-lg cursor-pointer flex flex-col items-center text-center" data-role="social-media-intern">
+                    <img src="https://placehold.co/100x100/A78BFA/ffffff?text=SMI" alt="Social Media Intern Icon" class="w-24 h-24 mb-4 rounded-full bg-purple-200 p-2">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Social Media Intern</h3>
+                    <p class="text-gray-600 text-sm">Navigating phishing attempts and account security.</p>
+                </div>
+
+                <!-- Dentist -->
+                <div class="card bg-white p-6 rounded-xl shadow-lg cursor-pointer flex flex-col items-center text-center" data-role="dentist">
+                    <img src="https://placehold.co/100x100/60A5FA/ffffff?text=DNT" alt="Dentist Icon" class="w-24 h-24 mb-4 rounded-full bg-blue-200 p-2">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Dentist</h3>
+                    <p class="text-gray-600 text-sm">Protecting patient health records from ransomware.</p>
+                </div>
+
+                <!-- Lawyer -->
+                <div class="card bg-white p-6 rounded-xl shadow-lg cursor-pointer flex flex-col items-center text-center" data-role="lawyer">
+                    <img src="https://placehold.co/100x100/F87171/ffffff?text=LWY" alt="Lawyer Icon" class="w-24 h-24 mb-4 rounded-full bg-red-200 p-2">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Lawyer</h3>
+                    <p class="text-gray-600 text-sm">Verifying confidential documents and client communications.</p>
+                </div>
+
+                <!-- Health Care Provider -->
+                <div class="card bg-white p-6 rounded-xl shadow-lg cursor-pointer flex flex-col items-center text-center" data-role="health-care-provider">
+                    <img src="https://placehold.co/100x100/34D399/ffffff?text=HCP" alt="Health Care Provider Icon" class="w-24 h-24 mb-4 rounded-full bg-green-200 p-2">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Health Care Provider</h3>
+                    <p class="text-gray-600 text-sm">Handling lost medical devices and patient data.</p>
+                </div>
+
+                <!-- Business Analyst -->
+                <div class="card bg-white p-6 rounded-xl shadow-lg cursor-pointer flex flex-col items-center text-center" data-role="business-analyst">
+                    <img src="https://placehold.co/100x100/FBBF24/ffffff?text=BSA" alt="Business Analyst Icon" class="w-24 h-24 mb-4 rounded-full bg-yellow-200 p-2">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Business Analyst</h3>
+                    <p class="text-gray-600 text-sm">Dealing with remote work malware and system integrity.</p>
+                </div>
+
+                <!-- Influencer -->
+                <div class="card bg-white p-6 rounded-xl shadow-lg cursor-pointer flex flex-col items-center text-center" data-role="influencer">
+                    <img src="https://placehold.co/100x100/EC4899/ffffff?text=INF" alt="Influencer Icon" class="w-24 h-24 mb-4 rounded-full bg-pink-200 p-2">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Influencer</h3>
+                    <p class="text-gray-600 text-sm">Spotting fake brand partnerships and protecting personal info.</p>
+                </div>
+
+                <!-- Accountant -->
+                <div class="card bg-white p-6 rounded-xl shadow-lg cursor-pointer flex flex-col items-center text-center" data-role="accountant">
+                    <img src="https://placehold.co/100x100/3B82F6/ffffff?text=ACC" alt="Accountant Icon" class="w-24 h-24 mb-4 rounded-full bg-blue-300 p-2">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Accountant</h3>
+                    <p class="text-gray-600 text-sm">Verifying urgent wire transfer requests and BEC scams.</p>
+                </div>
+
+                <!-- Customer Support -->
+                <div class="card bg-white p-6 rounded-xl shadow-lg cursor-pointer flex flex-col items-center text-center" data-role="customer-support">
+                    <img src="https://placehold.co/100x100/F97316/ffffff?text=CST" alt="Customer Support Icon" class="w-24 h-24 mb-4 rounded-full bg-orange-200 p-2">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Customer Support</h3>
+                    <p class="text-gray-600 text-sm">Handling suspicious account access requests.</p>
+                </div>
+
+                <!-- Executive Assistant -->
+                <div class="card bg-white p-6 rounded-xl shadow-lg cursor-pointer flex flex-col items-center text-center" data-role="executive-assistant">
+                    <img src="https://placehold.co/100x100/8B5CF6/ffffff?text=EXA" alt="Executive Assistant Icon" class="w-24 h-24 mb-4 rounded-full bg-indigo-200 p-2">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Executive Assistant</h3>
+                    <p class="text-gray-600 text-sm">Spotting spear phishing attempts targeting executives.</p>
+                </div>
+
+                <!-- Designer -->
+                <div class="card bg-white p-6 rounded-xl shadow-lg cursor-pointer flex flex-col items-center text-center" data-role="designer">
+                    <img src="https://placehold.co/100x100/10B981/ffffff?text=DSN" alt="Designer Icon" class="w-24 h-24 mb-4 rounded-full bg-teal-200 p-2">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Designer</h3>
+                    <p class="text-gray-600 text-sm">Dealing with malware from unverified asset downloads.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-gray-800 text-white py-8 px-6 md:px-12 text-center rounded-t-lg">
+            <p class="text-sm">&copy; 2025 Digital Security Essentials. All rights reserved.</p>
+            <div class="flex justify-center space-x-4 mt-4">
+                <a href="#" class="text-gray-400 hover:text-white">Privacy Policy</a>
+                <a href="#" class="text-gray-400 hover:text-white">Terms of Service</a>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Scenario Modal -->
+    <div id="scenarioModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modalRole">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl p-8 relative transform transition-all scale-95 opacity-0 duration-300 ease-out" id="modalContent">
+            <button class="absolute top-4 right-4 text-gray-500 hover:text-gray-800" id="closeModal" aria-label="Close scenario">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <h3 id="modalRole" class="text-3xl font-bold text-gray-800 mb-4"></h3>
+            <div class="scenario-content max-h-96 overflow-y-auto pr-4">
+                <div class="mb-6">
+                    <h4 class="text-xl font-semibold text-gray-700 mb-2">The Challenge:</h4>
+                    <p id="modalChallenge" class="text-gray-600 leading-relaxed"></p>
+                </div>
+                <div>
+                    <h4 class="text-xl font-semibold text-gray-700 mb-2">What would you do?</h4>
+                    <div id="modalQandA" class="flex flex-col items-center justify-center">
+                        <p id="modalQuestionDisplay" class="text-blue-800 font-extrabold text-xl md:text-2xl mb-4 text-center"></p>
+                        <div id="modalOptionsContainer" class="flex flex-col space-y-3 w-full max-w-md mb-4">
+                            <!-- Options will be dynamically inserted here -->
+                        </div>
+                        <p id="modalFeedbackDisplay" class="text-center font-medium mb-4"></p>
+                        <p id="modalExplanationDisplay" class="text-gray-700 leading-relaxed mb-4 text-center hidden"></p>
+                        <div class="mt-4 flex justify-center w-full">
+                            <button id="nextQuestionBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-lg transition duration-300 ease-in-out">Next Question</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // Define all scenarios with Q&A format (two options)
+        const scenarios = {
+            "social-media-intern": {
+                role: "Social Media Intern",
+                challenge: "You receive a suspicious email asking for login credentials to a new 'urgent' social media campaign platform. The email looks legitimate at first glance, but the sender's address is slightly off.",
+                questions: [
+                    {
+                        question: "You receive an email asking for login credentials to a new 'urgent' social media campaign platform. What is your first action?",
+                        option1: "Click on the link to see where it leads.",
+                        option2: "Do not click on any links or download attachments.",
+                        correctAnswer: "option2",
+                        explanation: "Clicking links or downloading attachments from suspicious emails can lead to malware infection or phishing scams."
+                    },
+                    {
+                        question: "The email sender's address looks slightly off. How do you verify its legitimacy?",
+                        option1: "Assume it's legitimate if it mentions an urgent task.",
+                        option2: "Look for subtle misspellings or unusual domains in the email address.",
+                        correctAnswer: "option2",
+                        explanation: "Phishing emails often use slight variations in email addresses to trick recipients. Always check the full email address."
+                    },
+                    {
+                        question: "After identifying a suspicious email, what should you do?",
+                        option1: "Delete it immediately and forget about it.",
+                        option2: "Report the email to your IT/cybersecurity department immediately.",
+                        correctAnswer: "option2",
+                        explanation: "Reporting suspicious emails helps your organization's cybersecurity team identify and block similar threats for others."
+                    },
+                    {
+                        question: "Is it ever safe to share login credentials via email?",
+                        option1: "Yes, if the email looks official and urgent.",
+                        option2: "Never share login credentials or personal information via email or unverified links.",
+                        correctAnswer: "option2",
+                        explanation: "Legitimate organizations will never ask for your login credentials via email. Always use official login portals."
+                    },
+                    {
+                        question: "How can you proactively protect your social media accounts?",
+                        option1: "Use the same password for all accounts for easy recall.",
+                        option2: "Change social media passwords regularly and enable two-factor authentication (2FA) on all accounts.",
+                        correctAnswer: "option2",
+                        explanation: "Strong, unique passwords and 2FA add significant layers of security to your accounts, making them much harder to compromise."
+                    }
+                ]
+            },
+            "dentist": {
+                role: "Dentist",
+                challenge: "Your digital health record system shows unusual activity. Some patient files appear to be encrypted, and a ransom note demands payment in cryptocurrency to restore access.",
+                questions: [
+                    {
+                        question: "What is the immediate action if ransomware is detected?",
+                        option1: "Try to decrypt the files yourself using online tools.",
+                        option2: "Immediately disconnect the affected systems from the network.",
+                        correctAnswer: "option2",
+                        explanation: "Disconnecting from the network prevents the ransomware from spreading to other systems and limits further damage."
+                    },
+                    {
+                        question: "Should you pay the ransom to restore access?",
+                        option1: "Yes, it's the fastest way to get data back.",
+                        option2: "Do not pay the ransom. There's no guarantee of data recovery, and it encourages further attacks.",
+                        correctAnswer: "option2",
+                        explanation: "Paying the ransom does not guarantee data recovery and funds criminal activities, making you a target for future attacks."
+                    },
+                    {
+                        question: "Who should you contact for assistance?",
+                        option1: "Your family IT expert or a local computer repair shop.",
+                        option2: "Notify your IT support or cybersecurity specialist immediately.",
+                        correctAnswer: "option2",
+                        explanation: "Professional IT and cybersecurity teams have the tools and expertise to handle ransomware incidents effectively."
+                    },
+                    {
+                        question: "Are there any legal obligations to report this incident?",
+                        option1: "No, it's a private matter as long as patient data isn't publicly exposed.",
+                        option2: "Report the incident to relevant regulatory bodies (e.g., HIPAA in the US) as required by law.",
+                        correctAnswer: "option2",
+                        explanation: "Healthcare providers are legally obligated to report breaches of protected health information to regulatory bodies like HIPAA."
+                    },
+                    {
+                        question: "How can data be recovered after a ransomware attack?",
+                        option1: "By paying the ransom as a last resort.",
+                        option2: "Restore data from secure, offline backups. Ensure backups are regularly tested and isolated from the main network.",
+                        correctAnswer: "option2",
+                        explanation: "Regular, tested, and isolated backups are your most reliable defense against data loss from ransomware attacks."
+                    }
+                ]
+            },
+            "lawyer": {
+                role: "Lawyer",
+                challenge: "You receive an urgent email from a 'client' with a link to a 'confidential document' related to a high-profile case. The email address looks almost correct, but there's a subtle difference, and the tone is unusually demanding.",
+                questions: [
+                    {
+                        question: "What should you do if you receive an email with a suspicious link?",
+                        option1: "Click the link to verify its content quickly.",
+                        option2: "Do not click the link or download any attachments.",
+                        correctAnswer: "option2",
+                        explanation: "Clicking suspicious links can lead to malware, credential theft, or further phishing attempts."
+                    },
+                    {
+                        question: "How can you verify the authenticity of the client's request?",
+                        option1: "Reply to the email and ask for a confirmation.",
+                        option2: "Verify the client's identity and the authenticity of the request through an alternative, known communication channel (e.g., a phone call to a verified number).",
+                        correctAnswer: "option2",
+                        explanation: "Always use a pre-established, trusted communication method to verify urgent or unusual requests, especially those involving sensitive information."
+                    },
+                    {
+                        question: "Who should you report this suspicious email to?",
+                        option1: "No one, just delete it to avoid clutter.",
+                        option2: "The firm's IT department or cybersecurity team.",
+                        correctAnswer: "option2",
+                        explanation: "Reporting to IT helps them analyze the threat, protect other employees, and strengthen the firm's defenses."
+                    },
+                    {
+                        question: "How can you help prevent similar incidents in the future?",
+                        option1: "Only communicate with clients via email, as it's faster.",
+                        option2: "Educate colleagues about common phishing attempts, especially those targeting legal professionals with sensitive case information.",
+                        correctAnswer: "option2",
+                        explanation: "Awareness and training are crucial defenses against social engineering tactics like phishing."
+                    }
+                ]
+            },
+            "health-care-provider": {
+                role: "Health Care Provider",
+                challenge: "A portable medical device (e.g., a tablet used for patient data collection during rounds) goes missing from a secure area. The device contains unencrypted patient information.",
+                questions: [
+                    {
+                        question: "What is the immediate action upon losing a medical device?",
+                        option1: "Search for it quietly to avoid panic before reporting.",
+                        option2: "Immediately report the loss to your IT department and your supervisor.",
+                        correctAnswer: "option2",
+                        explanation: "Prompt reporting allows for immediate action, such as remote wiping or tracking, to minimize data exposure."
+                    },
+                    {
+                        question: "Can the device be remotely secured?",
+                        option1: "No, once it's lost, it's gone and unrecoverable.",
+                        option2: "Initiate the organization's lost device protocol, which may include attempting a remote wipe of the device if possible.",
+                        correctAnswer: "option2",
+                        explanation: "Many organizations have Mobile Device Management (MDM) solutions that allow remote wiping or locking of lost devices to protect data."
+                    },
+                    {
+                        question: "How do you assess the impact of the loss?",
+                        option1: "Assume no sensitive data was on it to avoid complications.",
+                        option2: "Assess the potential impact of the data exposure, identifying what patient information was on the device.",
+                        correctAnswer: "option2",
+                        explanation: "Understanding the type and sensitivity of data on the lost device is critical for determining the severity of the breach and necessary next steps."
+                    },
+                    {
+                        question: "Are there regulatory reporting requirements for lost devices?",
+                        option1: "No, not for a single device, only for large-scale breaches.",
+                        option2: "Report the incident to regulatory bodies as required (e.g., HIPAA in the US) within the mandated timeframe.",
+                        correctAnswer: "option2",
+                        explanation: "Healthcare regulations like HIPAA mandate reporting of breaches involving protected health information, regardless of how the device was lost."
+                    },
+                    {
+                        question: "How can future losses be prevented?",
+                        option1: "By using only paper records to avoid digital risks.",
+                        option2: "Review and reinforce policies on device encryption, secure data handling, and physical security of medical equipment.",
+                        correctAnswer: "option2",
+                        explanation: "Implementing strong encryption, clear data handling policies, and physical security measures significantly reduces the risk of data breaches from lost devices."
+                    }
+                ]
+            },
+            "business-analyst": {
+                role: "Business Analyst",
+                challenge: "While working remotely on your company laptop, you receive a pop-up stating your system is infected with a virus and demanding immediate payment to 'fix' it. Your files seem to be inaccessible.",
+                questions: [
+                    {
+                        question: "What should you do if you see a pop-up demanding payment for a virus fix?",
+                        option1: "Click 'pay now' to resolve it quickly and get back to work.",
+                        option2: "Do not interact with the pop-up, click any buttons, or pay any money. This is likely scareware or ransomware.",
+                        correctAnswer: "option2",
+                        explanation: "These pop-ups are designed to scare you into paying. Interacting with them can worsen the situation or confirm your vulnerability."
+                    },
+                    {
+                        question: "How can you isolate the compromised laptop?",
+                        option1: "Just turn off the screen and hope for the best.",
+                        option2: "Immediately disconnect the laptop from the internet (unplug ethernet, turn off Wi-Fi).",
+                        correctAnswer: "option2",
+                        explanation: "Disconnecting from the internet prevents the malware from communicating with its command and control server or spreading to other devices on the network."
+                    },
+                    {
+                        question: "Who should you contact for help?",
+                        option1: "A local computer repair shop or a tech-savvy friend.",
+                        option2: "Contact the company's IT help desk or cybersecurity team using a different device or phone.",
+                        correctAnswer: "option2",
+                        explanation: "Your company's IT team is equipped to handle such incidents, ensuring proper remediation and compliance with company policies."
+                    },
+                    {
+                        question: "Should you try to fix the issue yourself?",
+                        option1: "Yes, if you have some basic tech knowledge to save time.",
+                        option2: "Do not attempt to fix the issue yourself, as this could worsen the situation or destroy forensic evidence.",
+                        correctAnswer: "option2",
+                        explanation: "Attempting self-remediation can complicate forensic analysis, make recovery harder, or inadvertently spread the malware."
+                    },
+                    {
+                        question: "How can the system be cleaned once IT is involved?",
+                        option1: "By simply deleting the pop-up and restarting the computer.",
+                        option2: "Once advised by IT, run a full system scan with approved antivirus software from a clean boot or recovery environment.",
+                        correctAnswer: "option2",
+                        explanation: "A thorough scan from a clean environment ensures that all traces of the malware are removed without interference from the infection itself."
+                    }
+                ]
+            },
+            "influencer": {
+                role: "Influencer",
+                challenge: "You receive a direct message on a social media platform from a 'brand' offering a highly lucrative partnership. They ask you to click a link to 'sign the contract' and provide your bank details for payment.",
+                questions: [
+                    {
+                        question: "How should you react to unsolicited lucrative offers?",
+                        option1: "Accept immediately, it's a great opportunity that might not come again.",
+                        option2: "Be highly skeptical of unsolicited offers, especially those that seem 'too good to be true' or require immediate action/sensitive financial details.",
+                        correctAnswer: "option2",
+                        explanation: "Scammers often use enticing offers to lower your guard and trick you into revealing sensitive information."
+                    },
+                    {
+                        question: "How can you verify the brand's authenticity?",
+                        option1: "Trust the link provided in the message, as it's from a 'brand'.",
+                        option2: "Verify the brand's authenticity through their official website or verified social media accounts. Do not use the links provided in the suspicious message.",
+                        correctAnswer: "option2",
+                        explanation: "Always cross-reference information with official, known sources. Scammers can easily fake profiles or messages."
+                    },
+                    {
+                        question: "Is it safe to provide bank details via social media DMs?",
+                        option1: "Yes, if the brand seems legitimate and you need the payment quickly.",
+                        option2: "Never provide bank details, social security numbers, or other sensitive personal information via unverified links, DMs, or emails.",
+                        correctAnswer: "option2",
+                        explanation: "Sensitive financial information should only be exchanged through secure, encrypted, and verified channels, never through direct messages or unverified links."
+                    },
+                    {
+                        question: "What should you do with the suspicious message?",
+                        option1: "Ignore it and hope it goes away, or block the sender.",
+                        option2: "Report the suspicious message to the social media platform.",
+                        correctAnswer: "option2",
+                        explanation: "Reporting helps the platform identify and remove fraudulent accounts, protecting other users."
+                    },
+                    {
+                        question: "What proactive steps can you take to secure your accounts?",
+                        option1: "Use a simple, easy-to-remember password across all your accounts.",
+                        option2: "Always use strong, unique passwords and enable two-factor authentication (2FA) on all your social media and email accounts.",
+                        correctAnswer: "option2",
+                        explanation: "Strong passwords and 2FA are fundamental security practices that significantly reduce the risk of account takeover."
+                    }
+                ]
+            },
+            "accountant": {
+                role: "Accountant",
+                challenge: "You receive an email from what appears to be a senior partner, requesting an urgent wire transfer to a new vendor. The email bypasses normal approval processes and pressures you for immediate action.",
+                questions: [
+                    {
+                        question: "How do you verify an urgent wire transfer request?",
+                        option1: "Reply to the email immediately to confirm, as it's from a senior partner.",
+                        option2: "Verify the request directly with the senior partner through a known, secure communication channel (e.g., a phone call to their verified office number, an in-person conversation), *not* by replying to the suspicious email.",
+                        correctAnswer: "option2",
+                        explanation: "Always use an out-of-band method to verify financial requests, especially when they are urgent or deviate from standard procedures."
+                    },
+                    {
+                        question: "Should you proceed with the transfer if it bypasses normal approvals?",
+                        option1: "Yes, if it's from a senior partner, their request takes precedence.",
+                        option2: "Do not initiate any transfer until the request is fully verified and follows established company protocols for financial transactions.",
+                        correctAnswer: "option2",
+                        explanation: "Bypassing established protocols is a major red flag in Business Email Compromise (BEC) scams. Always adhere to company policies."
+                    },
+                    {
+                        question: "Who should you report this suspicious email to?",
+                        option1: "The 'new vendor' mentioned in the email to clarify.",
+                        option2: "The IT/cybersecurity department as a potential Business Email Compromise (BEC) or 'CEO fraud' attempt.",
+                        correctAnswer: "option2",
+                        explanation: "Promptly reporting to IT allows them to investigate, block the sender, and warn other employees about the scam."
+                    },
+                    {
+                        question: "What social engineering tactics should you be aware of?",
+                        option1: "Only technical exploits like viruses.",
+                        option2: "Be aware of social engineering tactics that create a sense of urgency or authority to bypass security procedures.",
+                        correctAnswer: "option2",
+                        explanation: "Scammers often use psychological manipulation (like urgency or impersonation) to trick individuals into taking actions they wouldn't normally take."
+                    }
+                ]
+            },
+            "customer-support": {
+                role: "Customer Support",
+                challenge: "A customer calls, claiming their account was hacked and demanding immediate access. They provide some personal details but fail to answer all the required verification questions correctly.",
+                questions: [
+                    {
+                        question: "What is the most important rule when handling account access requests?",
+                        option1: "Grant access if they sound distressed and provide some details.",
+                        option2: "Strictly follow all identity verification protocols for account access requests. Do not deviate, even under pressure.",
+                        correctAnswer: "option2",
+                        explanation: "Adhering strictly to verification protocols prevents unauthorized access and protects customer data, even when faced with pressure."
+                    },
+                    {
+                        question: "What if the customer fails verification?",
+                        option1: "Give them a hint to the correct answer to help them out.",
+                        option2: "Do not provide access if verification questions are not fully met. Explain the security reasons for these procedures.",
+                        correctAnswer: "option2",
+                        explanation: "Failing verification means you cannot confirm their identity, and granting access would be a security risk. Explain the policy calmly."
+                    },
+                    {
+                        question: "Who should be informed about suspicious calls?",
+                        option1: "No one, just end the call if they fail verification.",
+                        option2: "Escalate suspicious calls to a supervisor or the fraud department for further investigation.",
+                        correctAnswer: "option2",
+                        explanation: "Escalation ensures that potential fraud attempts are properly investigated and mitigated by specialized teams."
+                    },
+                    {
+                        question: "How should you document such interactions?",
+                        option1: "Only note the outcome (access granted/denied).",
+                        option2: "Document the interaction thoroughly, noting any inconsistencies or red flags.",
+                        correctAnswer: "option2",
+                        explanation: "Detailed documentation helps in fraud investigations, identifies patterns, and improves future security responses."
+                    },
+                    {
+                        question: "What information should never be shared with callers?",
+                        option1: "Only sensitive financial data.",
+                        option2: "Internal tools, customer data, or security procedures with unverified callers.",
+                        correctAnswer: "option2",
+                        explanation: "Sharing internal information or customer data with unverified parties can lead to further breaches or social engineering attacks."
+                    }
+                ]
+            },
+            "executive-assistant": {
+                role: "Executive Assistant",
+                challenge: "You receive an email that appears to be from the CEO, asking for sensitive company documents to be sent to a personal email address for an 'urgent, confidential review' while they are traveling.",
+                questions: [
+                    {
+                        question: "How do you verify a sensitive request from an executive?",
+                        option1: "Reply to the email immediately to confirm receipt and ask for details.",
+                        option2: "Verify the request directly with the CEO through a known, secure channel (e.g., an internal chat, a phone call to their verified number, or in-person if possible), *not* by replying to the suspicious email.",
+                        correctAnswer: "option2",
+                        explanation: "Always use an alternative, verified communication method to confirm unusual or sensitive requests, as email can be easily spoofed."
+                    },
+                    {
+                        question: "Is it ever appropriate to send sensitive documents to a personal email?",
+                        option1: "Yes, if the CEO requests it and it's urgent.",
+                        option2: "Never send sensitive company documents to personal email addresses, even if requested by a superior, without explicit, verified authorization.",
+                        correctAnswer: "option2",
+                        explanation: "Sending sensitive data to personal emails creates uncontrolled copies and increases the risk of data breaches. Always follow official secure channels."
+                    },
+                    {
+                        question: "Who should you report this suspicious email to?",
+                        option1: "The CEO's personal assistant to confirm the request.",
+                        option2: "The IT/cybersecurity department immediately as a potential spear phishing attempt.",
+                        correctAnswer: "option2",
+                        explanation: "Spear phishing attacks targeting executives are common and can lead to significant data breaches. Prompt reporting is crucial."
+                    },
+                    {
+                        question: "What kind of social engineering tactics should you be aware of?",
+                        option1: "Only those involving fake invoices or financial requests.",
+                        option2: "Be vigilant about social engineering tactics that target executive support staff, leveraging authority and urgency.",
+                        correctAnswer: "option2",
+                        explanation: "Attackers often target executive assistants because they have access to sensitive information and are often under pressure to respond quickly to executive requests."
+                    }
+                ]
+            },
+            "designer": {
+                role: "Designer",
+                challenge: "You download a 'free font pack' from an unknown website for a new design project. Shortly after installing the fonts, your design software starts crashing, and some of your project files become inaccessible.",
+                questions: [
+                    {
+                        question: "What is the immediate action if your computer shows signs of infection after a download?",
+                        option1: "Try to uninstall the downloaded fonts and restart your computer.",
+                        option2: "Immediately disconnect the computer from the network to prevent potential malware spread.",
+                        correctAnswer: "option2",
+                        explanation: "Isolating the computer prevents the malware from infecting other devices on the network or exfiltrating data."
+                    },
+                    {
+                        question: "Should you continue working or try to open files?",
+                        option1: "Yes, to see if the files are truly corrupted or if you can save any progress.",
+                        option2: "Do not attempt to open any more files or continue working on the compromised machine.",
+                        correctAnswer: "option2",
+                        explanation: "Continuing to use an infected machine can lead to further data corruption, malware spread, or compromise of sensitive information."
+                    },
+                    {
+                        question: "Who should you contact for help?",
+                        option1: "The website where you downloaded the fonts to complain.",
+                        option2: "Contact the IT/cybersecurity department for assistance. Provide them with details about the downloaded file and the symptoms.",
+                        correctAnswer: "option2",
+                        explanation: "Your company's IT department has the necessary tools, policies, and expertise to handle malware incidents safely and effectively."
+                    },
+                    {
+                        question: "How can you prevent similar issues with downloads?",
+                        option1: "Download from any site that offers free assets, but run a virus scan afterward.",
+                        option2: "Avoid downloading software, fonts, plugins, or other assets from unverified or suspicious sources.",
+                        correctAnswer: "option2",
+                        explanation: "Always download software and assets from official, reputable sources to minimize the risk of malware."
+                    },
+                    {
+                        question: "How can you protect your design files from data loss?",
+                        option1: "By saving them only on your local hard drive, as it's faster.",
+                        option2: "Regularly back up your design files to secure, isolated storage (e.g., external hard drive, cloud storage with versioning) to ensure data recovery.",
+                        correctAnswer: "option2",
+                        explanation: "Regular, isolated backups are essential for recovering your work in case of data corruption, accidental deletion, or malware attacks."
+                    }
+                ]
+            }
+        };
+
+        const scenarioCards = document.querySelectorAll('.card');
+        const scenarioModal = document.getElementById('scenarioModal');
+        const closeModalButton = document.getElementById('closeModal');
+        const modalRole = document.getElementById('modalRole');
+        const modalChallenge = document.getElementById('modalChallenge');
+        const modalContent = document.getElementById('modalContent');
+
+        // New elements for landing page
+        const landingPage = document.getElementById('landingPage');
+        const exploreRolesBtn = document.getElementById('exploreRolesBtn');
+        const mainContent = document.getElementById('mainContent');
+        const selectScenarioSection = document.getElementById('select-your-scenario'); // Get the section to scroll to
+
+        // Navigation links
+        const homeNavLink = document.getElementById('homeNavLink');
+        const scenariosNavLink = document.getElementById('scenariosNavLink');
+
+
+        // Elements for new scenario Q&A view
+        let currentScenarioQuestions = []; // Now stores objects {question, option1, option2, correctAnswer, explanation}
+        let currentQuestionIndex = 0;
+        const modalQuestionDisplay = document.getElementById('modalQuestionDisplay');
+        const modalOptionsContainer = document.getElementById('modalOptionsContainer');
+        const modalFeedbackDisplay = document.getElementById('modalFeedbackDisplay');
+        const modalExplanationDisplay = document.getElementById('modalExplanationDisplay');
+        const nextQuestionBtn = document.getElementById('nextQuestionBtn');
+
+        let lastFocusedElement = null; // To store the element that triggered the modal
+
+        // Function to show a specific Q&A step
+        function showQuestion(index) {
+            const currentQandA = currentScenarioQuestions[index];
+            modalQuestionDisplay.textContent = currentQandA.question;
+            modalOptionsContainer.innerHTML = ''; // Clear previous options
+            modalFeedbackDisplay.textContent = ''; // Clear previous feedback
+            modalExplanationDisplay.classList.add('hidden'); // Hide explanation
+
+            // Create option buttons
+            const option1Button = document.createElement('button');
+            option1Button.textContent = currentQandA.option1;
+            option1Button.classList.add('option-button');
+            option1Button.dataset.option = 'option1';
+            option1Button.addEventListener('click', () => handleOptionClick(option1Button, 'option1', currentQandA.correctAnswer, currentQandA.explanation));
+            modalOptionsContainer.appendChild(option1Button);
+
+            const option2Button = document.createElement('button');
+            option2Button.textContent = currentQandA.option2;
+            option2Button.classList.add('option-button');
+            option2Button.dataset.option = 'option2';
+            option2Button.addEventListener('click', () => handleOptionClick(option2Button, 'option2', currentQandA.correctAnswer, currentQandA.explanation));
+            modalOptionsContainer.appendChild(option2Button);
+
+
+            // Update next button text
+            if (index === currentScenarioQuestions.length - 1) {
+                nextQuestionBtn.textContent = "Finish Scenario";
+            } else {
+                nextQuestionBtn.textContent = "Next Question";
+            }
+            nextQuestionBtn.disabled = true; // Disable until an answer is selected and feedback shown
+            nextQuestionBtn.classList.add('opacity-70', 'cursor-not-allowed'); // Apply disabled styles
+        }
+
+        // Handle option click
+        function handleOptionClick(clickedButton, selectedOption, correctAnswer, explanation) {
+            // Disable all option buttons after selection
+            Array.from(modalOptionsContainer.children).forEach(button => {
+                button.disabled = true;
+                // Ensure hover effect is removed for disabled state
+                button.classList.remove('hover:bg-indigo-700');
+            });
+
+            if (selectedOption === correctAnswer) {
+                clickedButton.classList.add('correct');
+                modalFeedbackDisplay.textContent = "Correct!";
+                modalFeedbackDisplay.classList.remove('text-red-600');
+                modalFeedbackDisplay.classList.add('text-green-600');
+            } else {
+                clickedButton.classList.add('incorrect');
+                modalFeedbackDisplay.textContent = "Incorrect. Please review the explanation.";
+                modalFeedbackDisplay.classList.remove('text-green-600');
+                modalFeedbackDisplay.classList.add('text-red-600');
+                // Highlight the correct answer
+                Array.from(modalOptionsContainer.children).find(btn => btn.dataset.option === correctAnswer).classList.add('correct');
+            }
+
+            modalExplanationDisplay.textContent = explanation;
+            modalExplanationDisplay.classList.remove('hidden');
+            nextQuestionBtn.disabled = false; // Enable next button
+            nextQuestionBtn.classList.remove('opacity-70', 'cursor-not-allowed'); // Remove disabled styles
+        }
+
+
+        // Event listener for next question button
+        nextQuestionBtn.addEventListener('click', () => {
+            if (currentQuestionIndex < currentScenarioQuestions.length - 1) {
+                currentQuestionIndex++;
+                showQuestion(currentQuestionIndex);
+            } else {
+                // Scenario finished
+                closeModal();
+            }
+        });
+
+        // Modified openModal function
+        function openModal(roleKey) {
+            lastFocusedElement = document.activeElement; // Store the currently focused element
+
+            const scenario = scenarios[roleKey];
+            if (scenario) {
+                modalRole.textContent = scenario.role;
+                modalChallenge.textContent = scenario.challenge;
+                currentScenarioQuestions = scenario.questions; // Store Q&A objects for navigation
+                currentQuestionIndex = 0; // Reset to first Q&A
+                showQuestion(currentQuestionIndex); // Display the first Q&A
+
+                scenarioModal.classList.remove('hidden');
+                setTimeout(() => {
+                    modalContent.classList.remove('scale-95', 'opacity-0');
+                    modalContent.classList.add('scale-100', 'opacity-100');
+                    closeModalButton.focus(); // Focus on the close button when modal opens
+                }, 10);
+            }
+        }
+
+        // Function to close the modal
+        function closeModal() {
+            // Animate modal out
+            modalContent.classList.remove('scale-100', 'opacity-100');
+            modalContent.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                scenarioModal.classList.add('hidden');
+                if (lastFocusedElement) {
+                    lastFocusedElement.focus(); // Return focus to the element that opened the modal
+                }
+            }, 300); // Match transition duration
+        }
+
+        // Add event listeners to each scenario card
+        scenarioCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const role = card.dataset.role;
+                openModal(role);
+            });
+        });
+
+        // Add event listener to close modal button
+        closeModalButton.addEventListener('click', closeModal);
+
+        // Close modal when clicking outside the modal content
+        scenarioModal.addEventListener('click', (e) => {
+            if (e.target === scenarioModal) {
+                closeModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !scenarioModal.classList.contains('hidden')) {
+                closeModal();
+            }
+        });
+
+        // Event listener for landing page button
+        exploreRolesBtn.addEventListener('click', () => {
+            landingPage.classList.add('hidden');
+            mainContent.classList.remove('hidden');
+            // Scroll to the "Select Your Scenario" section
+            selectScenarioSection.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // Event listener for "Scenarios" navigation link
+        scenariosNavLink.addEventListener('click', (e) => {
+            e.preventDefault(); // Prevent default anchor link behavior
+            // Ensure main content is visible if coming from landing page
+            if (landingPage.classList.contains('hidden')) {
+                selectScenarioSection.scrollIntoView({ behavior: 'smooth' });
+            } else {
+                // If still on landing page, transition to main content then scroll
+                landingPage.classList.add('hidden');
+                mainContent.classList.remove('hidden');
+                setTimeout(() => {
+                    selectScenarioSection.scrollIntoView({ behavior: 'smooth' });
+                }, 10); // Small delay to ensure mainContent is rendered
+            }
+        });
+
+        // Event listener for "Home" navigation link (to show landing page again)
+        homeNavLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            mainContent.classList.add('hidden');
+            landingPage.classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top
+        });
+    </script>
+</body>
+</html>
